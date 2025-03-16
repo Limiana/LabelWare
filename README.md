@@ -1,5 +1,5 @@
 # LabelWare
-LabelWare is a command-line software that allows you to copy labels from one repository to many others.
+LabelWare is a command-line software that allows you to copy labels from one repository to others easily and without need to manually modify JSON files or inputting all the repository names into a huge file. 
 
 ## How to use
 1. Download and run LabelWare.
