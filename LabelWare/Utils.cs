@@ -1,63 +1,51 @@
-﻿using System;
+﻿using LabelWare.Screens;
+using Octokit;
+using Octokit.Internal;
+using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace LabelWare;
-public static class Utils
+public unsafe static class Utils
 {
-    public static ImmutableList<LabelConfiguration> LoadLabelConfiguration()
+    public static bool IsNullOrEmpty(this string? s)
     {
-        var ret = new List<LabelConfiguration>();
-        try
-        {
-            var lst = File.ReadAllText("labels.csv").ReplaceLineEndings().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-            if(lst.Length < 2)
-            {
-                Console.WriteLine($"Please populate labels.csv");
-            }
-            var separator = ",";
-            for (int i = 1; i < lst.Length; i++)
-            {
-                var array = lst[i].Split(separator);
-                if (array.Length < 4) continue; 
-                var entry = new LabelConfiguration(array[0], array[1], array[2], array[3..]);
-                ret.Add(entry);
-                Console.WriteLine($"Loaded {entry}");
-            }
-        }
-        catch(Exception e)
-        {
-            Console.WriteLine(e.ToString());
-        }
-        return ret.ToImmutableList();
+        return string.IsNullOrEmpty(s);
     }
 
-    /// <summary>
-    /// Safely selects an entry of the list at a specified index, returning default value if index is out of range.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="list"></param>
-    /// <param name="index"></param>
-    /// <returns></returns>
-    public static T SafeSelect<T>(this IList<T> list, int index)
+    public static void Log(this Exception e)
     {
-        if (index < 0 || index >= list.Count) return default;
-        return list[index];
+        Console.WriteLine($"{e}");
     }
 
-    /// <summary>
-    /// Safely selects an entry of the array at a specified index, returning default value if index is out of range.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="list"></param>
-    /// <param name="index"></param>
-    /// <returns></returns>
-    public static T SafeSelect<T>(this T[] list, int index)
+    public static int GetChoice()
     {
-        if (index < 0 || index >= list.Length) return default;
-        return list[index];
+        var ret = Console.ReadLine();
+        if(!ret.IsNullOrEmpty() && int.TryParse(ret, out var i))
+        {
+            return i;
+        }
+        return -1;
+    }
+
+    public static void CreateClient()
+    {
+        if(C.Token != "")
+        {
+            var cred = new InMemoryCredentialStore(new(C.Token, AuthenticationType.Bearer));
+            Client = new GitHubClient(new("LabelWare"), cred);
+            try
+            {
+                var limit = Client.RateLimit.GetRateLimits().Result;
+                Console.WriteLine($"Token API Limit: {limit.Resources.Core.Remaining}/{limit.Resources.Core.Limit}, reset at {limit.Resources.Core.Reset.ToLocalTime()}");
+            }
+            catch(Exception e)
+            {
+                e.Log();
+            }
+        }
     }
 }
