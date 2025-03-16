@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LabelWare.DataFiles;
-public unsafe class RepositoryDescriptor
+public unsafe struct RepositoryDescriptor : IEquatable<RepositoryDescriptor>
 {
     public string UserOrOrg = "";
     public string RepoName = "";
@@ -22,8 +22,35 @@ public unsafe class RepositoryDescriptor
         IsOrganization = isOrganization;
     }
 
+    public override bool Equals(object? obj)
+    {
+        return obj is RepositoryDescriptor descriptor && Equals(descriptor);
+    }
+
+    public bool Equals(RepositoryDescriptor other)
+    {
+        return UserOrOrg == other.UserOrOrg &&
+               RepoName == other.RepoName &&
+               IsOrganization == other.IsOrganization;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(UserOrOrg, RepoName, IsOrganization);
+    }
+
     public override string ToString()
     {
         return $"{UserOrOrg}/{RepoName} ({(IsOrganization ? "Organization" : "Personal")})";
+    }
+
+    public static bool operator ==(RepositoryDescriptor left, RepositoryDescriptor right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(RepositoryDescriptor left, RepositoryDescriptor right)
+    {
+        return !(left == right);
     }
 }

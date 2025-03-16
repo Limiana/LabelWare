@@ -25,7 +25,7 @@ public class Program
         }
         catch(Exception e)
         {
-            Console.Write(e.ToString());
+            Console.WriteLine(e.ToString());
         }
         MainScreen.Run();
     }

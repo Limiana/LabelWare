@@ -23,7 +23,12 @@ public unsafe static class Utils
 
     public static int GetChoice()
     {
-        var ret = Console.ReadLine();
+        return GetChoice(out _);
+    }
+
+    public static int GetChoice(out string ret)
+    {
+        ret = Console.ReadLine() ?? "";
         if(!ret.IsNullOrEmpty() && int.TryParse(ret, out var i))
         {
             return i;
@@ -46,6 +51,41 @@ public unsafe static class Utils
             {
                 e.Log();
             }
+        }
+    }
+
+    /// <summary>
+    /// Adds <paramref name="value"/> into HashSet if it doesn't exists yet or removes if it exists.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="hashSet"></param>
+    /// <param name="value"></param>
+    /// <returns>Whether <paramref name="hashSet"/> contains <paramref name="value"/> after function has been executed.</returns>
+    public static bool Toggle<T>(this HashSet<T> hashSet, T value)
+    {
+        if(hashSet.Contains(value))
+        {
+            hashSet.Remove(value);
+            return false;
+        }
+        else
+        {
+            hashSet.Add(value);
+            return true;
+        }
+    }
+
+    public static bool Toggle<T>(this List<T> list, T value)
+    {
+        if(list.Contains(value))
+        {
+            list.RemoveAll(x => x.Equals(value));
+            return false;
+        }
+        else
+        {
+            list.Add(value);
+            return true;
         }
     }
 }

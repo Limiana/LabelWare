@@ -9,5 +9,5 @@ public unsafe class Configuration
 {
     public string Token = "";
     public RepositoryDescriptor SourceRepository = new();
-    public List<RepositoryDescriptor> WatchedRepos = [];
+    public HashSet<RepositoryDescriptor> WatchedRepos = [];
 }

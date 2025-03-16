@@ -19,8 +19,8 @@ public unsafe class MainScreen
                 [0] - Exit
                 [1] - Input access token
                 [2] - Configure source repository
-                [3] - Add new target repository
-                [4] - View current repository list
+                [3] - Configure target repositories
+                [4] - Begin operation
                 """);
             if(Client == null) CreateClient();
             var result = Console.ReadLine();
@@ -39,6 +39,14 @@ public unsafe class MainScreen
                     if(value == 2)
                     {
                         ConfigureSourceRepoScreen.Run();
+                    }
+                    if(value == 3)
+                    {
+                        SelectTargetReposScreen.Run();
+                    }
+                    if(value == 4)
+                    {
+                        ExecuteScreen.Run();
                     }
                 }
                 catch(Exception e)
